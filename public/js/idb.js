@@ -13,8 +13,18 @@ request.onsuccess = function (event) {
     const transaction = db.transaction(["budget_tracker"], "readwrite");
     const budgetObjectStore = transaction.objectStore("budget_tracker");
 
-    var history = budgetObjectStore.getAll();
+    const history = budgetObjectStore.getAll();
     console.log(history);
+    history.onsuccess = ()=> {
+        fetch("/api/transaction/bulk",{
+            method:"post",
+            body:JSON.stringify(history.result),
+            headers:{
+                "Content-Type":"application/json"
+            }
+        } )
+        .then(()=>)
+    }
   }
 };
 
