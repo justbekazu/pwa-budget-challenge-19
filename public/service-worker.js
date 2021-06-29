@@ -3,10 +3,10 @@ const VERSION = "version_01";
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const FILES_TO_CACHE = [
-  "./index.html",
-  "./public/css/style.css",
-  "./public/js/index.js",
-  "./models/transaction.js",
+  "/index.html",
+  "/css/style.css",
+  "/js/index.js",
+  "/js/idb.js",
 ];
 
 self.addEventListener("install", function (e) {
@@ -21,7 +21,7 @@ self.addEventListener("install", function (e) {
 self.addEventListener("activate", function (e) {
   e.waitUntil(
     caches.keys().then(function (keyList) {
-      const cacheKeeplist = keyList.filter(function (key) {
+      let cacheKeeplist = keyList.filter(function (key) {
         return key.indexOf(APP_PREFIX);
       });
 

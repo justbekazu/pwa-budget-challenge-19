@@ -15,16 +15,43 @@ request.onsuccess = function (event) {
 
     const history = budgetObjectStore.getAll();
     console.log(history);
-    history.onsuccess = ()=> {
-        fetch("/api/transaction/bulk",{
-            method:"post",
-            body:JSON.stringify(history.result),
-            headers:{
-                "Content-Type":"application/json"
+    history.onsuccess = () => {
+      if (history.result.length > 0) {
+        fetch("/api/transaction/bulk", {
+          method: "POST",
+          body: JSON.stringify(history.result),
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          //opening a new transaction to save new data
+
+          .then((server) => {
+            if (server.message) {
+              throw new Error(server);
             }
-        } )
-        .then(()=>)
-    }
+
+            const transaction = db.transaction(
+              ["new_transaction"],
+              "readWrite"
+            );
+
+            //accessing the "new" transaction db
+            const transactionObjectStore =
+              transaction.objectStore("new_transation");
+
+            //clearing all items in the db
+            transactionObjectStore.clear();
+            alert("transactions have been saved");
+          })
+
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    };
   }
 };
 
